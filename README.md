@@ -13,4 +13,3 @@ beacon (3 marks)
 • Activity 5, January exam period: Put it all together to achieve the
 specification given above + some advanced objectives (16 marks)
 
-file://studata10.shef.ac.uk/home/co/cob24oo/ManW10/Downloads/RobotSpecification(1).pdf

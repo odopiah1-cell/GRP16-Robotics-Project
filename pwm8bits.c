@@ -28,10 +28,13 @@ int main(void)
 	LATA = 0;					//Clear all Port A Outputs
  	int markspace=127;         //mark space value for PWM (50% mark space ratio)
  	TRISCbits.RC2=0;          //set CCP1(pin13) to an output pin
- 	PR2 = 0b11111111 ;        //set period of PWM (PR2 = 255)
+	TRISCbits.RC1=0;		//set CCP2(pin12) to an output pin
+ 	PR2 = 0b11111111 ;        //set period of PWM
 	T2CON = 0b00000111 ;   //Timer 2(TMR2) on, Prescaler = 16
 	CCP1CON = (0x0c);        //0x0c enables PWM module CCP1
+	CCP2CON = (0x0c);		// 0x0c enables PWM module CCP2
  	CCPR1L = markspace;  //Load duty cycle into CCP1CON, PWM begins
+	CCPR2L = markspace;  	//Load duty cycle into CCP2CON, PWM begins
 
 	// our "main" code is what follows bellow
 

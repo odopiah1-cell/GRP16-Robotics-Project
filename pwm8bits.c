@@ -18,6 +18,13 @@
 
 void wait10ms(int del); // generated a delay in multiples of 10ms
 
+void BreakLR(); // needed to add prototypes of functions
+void Forward();
+void Reverse();
+void TurnL();
+void TurnR();
+void Twirl();
+
 int main(void)
 {
 	// Below is our "set up" statements
@@ -39,17 +46,15 @@ int main(void)
 	// our "main" code is what follows bellow
 
 	Twirl();
-	wait10ms(2000);
-	while(1)
-	{
-		Forward();
-		wait10ms(1000);
+	wait10ms(200);
+
+		Forward();   // while loop was unneeded as program is sequential anyways
+		wait10ms(100);
 		BreakLR();
-		wait10ms(1000);
+		wait10ms(100);  // delays were 10x too long
 		Reverse();
-		wait10ms(1000);
-		Break();
-	}
+		wait10ms(100)
+		BreakLR();   // break function didnt work?
 	
  	while(1);                //Do nothing forever
 }

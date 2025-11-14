@@ -45,16 +45,13 @@ int main(void)
 
 	// our "main" code is what follows bellow
 
-	Twirl();
-	wait10ms(200);
-
-		Forward();   // while loop was unneeded as program is sequential anyways
-		wait10ms(100);
-		BreakLR();
-		wait10ms(100);  // delays were 10x too long
-		Reverse();
-		wait10ms(100)
-		BreakLR();   // break function didnt work?
+	Forward();
+    wait10ms(100);
+    BreakLR();
+    wait10ms(100);  // idk why but it only worked when i types it in not copy and paste
+    Reverse();
+    wait10ms(100);
+    BreakLR();
 	
  	while(1);                //Do nothing forever
 }

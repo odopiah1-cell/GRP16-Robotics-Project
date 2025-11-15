@@ -29,8 +29,9 @@ int main(void)
 {
 	// Below is our "set up" statements
 
+	ADCON1 =0b00001101;			// Sets voltage reference and ports AN0 and AN1 as analogue
 	TRISB = 0b11000000; 		// Set A1 and A2 as Outputs
-	TRISA = 0b11110011;			// Set IR components as Inputs and B1&2 as Outputs
+	TRISA = 0b11001111;			// Set IR components as Inputs and B1&2 as Outputs
 	LATB = 0; 					// Clear all Port B Outputs
 	LATA = 0;					//Clear all Port A Outputs
  	int markspace=127;         //mark space value for PWM (50% mark space ratio)

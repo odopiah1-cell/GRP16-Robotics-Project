@@ -1,9 +1,18 @@
 /* 
  * File:   ADtest.c
- * Author: Craig Bacon                               Created on 31 August 2017
  * Reads the left hand IR distance sensor connected to analogue input AN0(Pin2)      
  * If the value of the IR sensor is greater than setpoint_distance turn on LED3.
+ Modify your code to:
+• Include both IR obstacle sensors
+• Move the motors which:
+• stop when an obstacle is detected,
+• reverse for 2s,
+• turn left or right for a set amount of time (which needs to be determined by you through trial and error) so that the robot has turned 90 degrees,
+• move forward for 2s
+• turn 90 degrees
+• move forward for 2s. (3 marks
  */
+
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +27,7 @@ unsigned int readADC(void);    //Read ADC
 
 int main(void)
 {
-ADCON1=0b00001110;  //Set voltage reference and port A0 as analogue input
+ADCON1=0b00001101;  //Set voltage reference and port A0 and A1 as analogue input
 TRISA=0b11111111;   //Port A all inputs
 TRISB=0b00000000;   //Port B all outputs
 setupADC();         // Configure ADC
@@ -30,13 +39,13 @@ while(1){
         LED3=0;
  }
 }
-void setupADC(void){    //configure A/D
+void setupADC(void){    // configure A/D
 ADCON2bits.ADCS0=0;     // Fosc/32
 ADCON2bits.ADCS1=1;     
-ADCON2bits.ADCS2=0;
-ADCON2bits.ADFM=1;      //A/D result right justified
-ADCON1=0b00001110;      //Set voltage reference and port A0 as A/D
-ADCON0bits.ADON=1;      //Turn on ADC
+ADCON2bits.ADCS2=0;     
+ADCON2bits.ADFM=1;      // A/D result right justified
+ADCON1=0b00001101;      // Set voltage reference and port A0 and A1 as A/D
+ADCON0bits.ADON=1;      // Turn on ADC
 }
 unsigned int readADC(void){	 //Read port AN0
 ADCON0bits.CHS0=0;          //0000,channel 0 is set,

@@ -10,7 +10,7 @@
 • turn left or right for a set amount of time (which needs to be determined by you through trial and error) so that the robot has turned 90 degrees,
 • move forward for 2s
 • turn 90 degrees
-• move forward for 2s. (3 marks
+• move forward for 2s. (3 marks)
  */
 
 #include <xc.h>
@@ -47,7 +47,7 @@ ADCON2bits.ADFM=1;      // A/D result right justified
 ADCON1=0b00001101;      // Set voltage reference and port A0 and A1 as A/D
 ADCON0bits.ADON=1;      // Turn on ADC
 }
-unsigned int readADC(void){	 //Read port AN0
+unsigned int readADCL(void){	 //Read port AN0
 ADCON0bits.CHS0=0;          //0000,channel 0 is set,
 ADCON0bits.CHS1=0;  		//use binary number to select ADC channel
 ADCON0bits.CHS2=0;  		//e.g. 1001 channel 9 set
@@ -56,3 +56,13 @@ ADCON0bits.GO=1;
 while (ADCON0bits.GO);  //do nothing while conversion in progress
 return ((ADRESH<<8)+ADRESL); //Combines high & low bytes into one 16 bit
 }                           // value and returns Result (A/D value 0-1023)
+
+unsigned int readADCR(void){	 //Read port AN1
+ADCON0bits.CHS0=1;          //0001,channel 1 is set,
+ADCON0bits.CHS1=0;  	
+ADCON0bits.CHS2=0;  	
+ADCON0bits.CHS3=0;  		//Channel 1 set
+ADCON0bits.GO=1;
+while (ADCON0bits.GO);
+return ((ADRESH<<8)+ADRESL);
+}               

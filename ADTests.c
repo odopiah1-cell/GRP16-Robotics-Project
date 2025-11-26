@@ -16,6 +16,7 @@
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pmw8bits.h>
 #pragma config OSC = HS     //High speed resonator
 #pragma config WDT = OFF    //Watchdog timer off
 #pragma config LVP = OFF    //Low voltage programmer disabled
@@ -23,7 +24,9 @@
 #define LED3 LATBbits.LATB4    //Define LED3
 int setpoint_distance = 400;   //Distance set point
 void setupADC(void);           //Configure A/D
-unsigned int readADC(void);    //Read ADC
+unsigned int readADCL(void);    //Read ADC
+unsigned int readADCR(void);
+
 
 int main(void)
 {
@@ -33,10 +36,11 @@ TRISB=0b00000000;   //Port B all outputs
 setupADC();         // Configure ADC
 LATB=0;             //Turn Leds off
 while(1){
-    if(readADC() >= setpoint_distance)  //If left hand sensor detects an object
+    if(readADCL() & readADCR() >= setpoint_distance)  //If left hand sensor detects an object
         LED3=1;                       //equal or greater than setpoint_distance
     else                              //turn on LED3
         LED3=0;
+ 
  }
 }
 void setupADC(void){    // configure A/D
@@ -47,6 +51,7 @@ ADCON2bits.ADFM=1;      // A/D result right justified
 ADCON1=0b00001101;      // Set voltage reference and port A0 and A1 as A/D
 ADCON0bits.ADON=1;      // Turn on ADC
 }
+
 unsigned int readADCL(void){	 //Read port AN0
 ADCON0bits.CHS0=0;          //0000,channel 0 is set,
 ADCON0bits.CHS1=0;  		//use binary number to select ADC channel
@@ -66,3 +71,4 @@ ADCON0bits.GO=1;
 while (ADCON0bits.GO);
 return ((ADRESH<<8)+ADRESL);
 }               
+

@@ -36,7 +36,7 @@ TRISB=0b00000000;   //Port B all outputs
 setupADC();         // Configure ADC
 LATB=0;             //Turn Leds off
 while(1){
-    if(readADCL() & readADCR() >= setpoint_distance)  //If left hand sensor detects an object
+    if(readADCL() && readADCR() >= setpoint_distance)  //If left hand sensor detects an object
         LED3=1;                       //equal or greater than setpoint_distance
     else                              //turn on LED3
         LED3=0;

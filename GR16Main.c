@@ -18,6 +18,9 @@
 #define B1 LATAbits.LATA4
 #define B2 LATAbits.LATA5
 
+#define IRBL LATAbits.LATA2
+#define IRBR LATAbits.LATA3
+
 int setpoint_distance = 400;   //Distance set point
 void setupADC(void);           //Configure A/D
 unsigned int readADCL(void);    //Read ADC
@@ -36,7 +39,7 @@ int main(void)
 {
 	// Below is our "set up" statements
 
-	ADCON1 =0b0001011;			// Sets voltage reference and ports AN0 and AN1 as analogue
+	ADCON1 =0b0001101;			// Sets voltage reference and ports AN0 and AN1 as analogue
 	TRISA=0b11001111;   //Port A all inputs except B1 & B2
     TRISB=0b11000000;   //Port B, RB0 to RB5 as outputs
     setupADC();         // Configure ADC
@@ -61,6 +64,8 @@ int main(void)
         wait10ms(50);               //wait 1/2 a second
      }
 
+	TurnL();
+	wait10ms(140);
     
     while(1){
     unsigned int left = readADCL();
@@ -69,43 +74,49 @@ int main(void)
     
     
     if(left >= setpoint_distance && right >= setpoint_distance){
+		LED2=LED3=1;
         Reverse();
         wait10ms(T); // Set 200 in lab & 50-70 in dorm depending on space available
         TurnR();
         wait10ms(70);
         Forward();
         wait10ms(T);
-        TurnL();
-        wait10ms(70);
-        Forward();
-        wait10ms(T);
+        
     }
     else if(left >= setpoint_distance){  //If left hand sensor detects object equal or greater than setpoint_distance
-        LED1=LED2=LED3=LED4=1;               //turn on LED1 & LED2
+        LED2=1;               //turn on LED2
         Reverse();
         wait10ms(T);
         TurnR();
         wait10ms(70);
         Forward();
         wait10ms(T);
-        TurnL();
-        wait10ms(70);
-        Forward();
-        wait10ms(T);
+        
     }
     else if(right >= setpoint_distance){  //If right hand sensor detects an object equal or greater than setpoint_distance
-        LED3=LED4=1;                 //turn on LED3 & LED4
+        LED3=1;                 //turn on LED3 & LED4
         Reverse();
         wait10ms(T);
         TurnL();
         wait10ms(70);
         Forward();
         wait10ms(T);
-        TurnR();
-        wait10ms(70);
-        Forward();
-        wait10ms(T);
-    }
+	}
+	while(!IRBL && !IRBR){
+		LED1=LED4=1;
+		Forward();
+	}
+	while(IRBL && IRBR){
+		BreakLR();
+	}
+	while(!IRBL && IRBR){
+		LED1=1;
+		TurnR();
+	}
+    while(IRBL && !IRBR){
+		LED4=1;
+		TurnL();
+	}
  }
  
 }
@@ -117,7 +128,7 @@ void wait10ms(int del){	 //delay function
     return;
 }
 
-// Below are functions for IR sensors
+// Below are functions for IR distance sensors
 
 void setupADC(void){    // configure A/D
 ADCON2bits.ADCS0=0;     // Fosc/32
@@ -186,10 +197,4 @@ void TurnL()
 	B2 = 0;
 }
 
-void Twirl()
-{
-	A1 = 0;
-	A2 = 1;
-	B1 = 0;
-	B2 = 0;
-}
+

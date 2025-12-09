@@ -66,17 +66,18 @@ int main(void)
     while(1){
     unsigned int left = readADCL();
     unsigned int right = readADCR();
-    int T = 30; // wait time
-    int TurnT = 50; // Turning time
+    int T = 20; // wait time (Set 200 in lab & 30 in small room/dorm)
+    int TurnT = 50; // Turning time (TurnT is proportional to the friction of the floor)
+    int k = TurnT/4; //Corrects any overturn on smoother surfaces
     
-    LED1=LED2=IRBL;
+    LED1=LED2=IRBL; // Shows that IRB is working correctly
     LED3=LED4=IRBR;
     
     if(left >= setpoint_distance && right >= setpoint_distance){
         Reverse();
-        wait10ms(T); // Set 200 in lab & 50-70 in dorm depending on space available
+        wait10ms(T);
         TurnR();
-        wait10ms(TurnT);
+        wait10ms(k);
         Forward();
         wait10ms(T);
         
@@ -88,15 +89,18 @@ int main(void)
         wait10ms(TurnT);
         Forward();
         wait10ms(T);
+        TurnL();
+        wait10ms(k);
     }
     else if(right >= setpoint_distance){  //If right hand sensor detects an object equal or greater than setpoint_distance
-        LED3=1;                 //turn on LED3 & LED4
         Reverse();
         wait10ms(T);
         TurnL();
         wait10ms(TurnT);
         Forward();
         wait10ms(T);
+        TurnR();
+        wait10ms(k);
 	}
 	if(!IRBL && !IRBR){
 		Forward();
@@ -144,7 +148,7 @@ while (ADCON0bits.GO);
 return ((ADRESH<<8)+ADRESL);
 }               
 
-// Below are functions for Moter controls
+// Below are functions for Motor controls
 
 void BreakLR()
 {

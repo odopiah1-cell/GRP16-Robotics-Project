@@ -21,6 +21,8 @@
 #define IRBL PORTAbits.RA2
 #define IRBR PORTAbits.RA3
 
+  int obstaclesHit = 0;
+
 int setpoint_distance = 400;   //Distance set point
 void setupADC(void);           //Configure A/D
 unsigned int readADCL(void);    //Read ADC
@@ -36,6 +38,7 @@ void TurnR();
 
 int main(void)
 {
+  
 	// Below is our "set up" statements
 
 	ADCON1=0b00001101;			// Sets voltage reference and ports AN0 and AN1 as analogue
@@ -56,6 +59,7 @@ int main(void)
 
 	// our "main" code is what follows bellow
     
+  
     for(int i=0; i<3; i++){
         LED1=LED2=LED3=LED4 = 1;    //turn LED1 on
         wait10ms(50);               //wait 1/2 a second
@@ -66,43 +70,59 @@ int main(void)
     while(1){
     unsigned int left = readADCL();
     unsigned int right = readADCR();
-    int T = 30; // wait time
-    int TurnT = 50; // Turning time
+    int T = 20; // wait time (Set 200 in lab & 30 in small room/dorm)
+    int TurnT = 50; // Turning time (TurnT is proportional to the friction of the floor)
+    int k = TurnT/4; //Corrects any overturn on smoother surfaces
     
-    LED1=LED2=IRBL;
-    LED3=LED4=IRBR;
+    LED2=!IRBL; // Shows that IRB is working correctly
+    LED3=!IRBR;
+    LED1 = LED4 = 0;
     
     if(left >= setpoint_distance && right >= setpoint_distance){
+        LED1 = LED4 = 1;
         Reverse();
-        wait10ms(T); // Set 200 in lab & 50-70 in dorm depending on space available
+        wait10ms(T);
         TurnR();
-        wait10ms(TurnT);
+        wait10ms(k);
         Forward();
         wait10ms(T);
+        obstaclesHit += 1;
         
     }
     else if(left >= setpoint_distance){  //If left hand sensor detects object equal or greater than setpoint_distance
+        LED1 = 1;
         Reverse();
         wait10ms(T);
         TurnR();
         wait10ms(TurnT);
         Forward();
         wait10ms(T);
+        TurnL();
+        wait10ms(k);
+        obstaclesHit += 1;
     }
     else if(right >= setpoint_distance){  //If right hand sensor detects an object equal or greater than setpoint_distance
-        LED3=1;                 //turn on LED3 & LED4
+        LED4 = 1;
         Reverse();
         wait10ms(T);
         TurnL();
         wait10ms(TurnT);
         Forward();
         wait10ms(T);
+        TurnR();
+        wait10ms(k);
+        obstaclesHit += 1;
 	}
-	if(!IRBL && !IRBR){
+	
+    if(obstaclesHit > 2 && (!IRBL || !IRBR))
+    {
+        BreakLR();
+    }
+    else if(!IRBL && !IRBR){
 		Forward();
 	}
 	else if(IRBL && IRBR){
-		BreakLR();
+		TurnR();
 	}
 	else if(IRBL && !IRBR){
 		TurnR();
@@ -110,8 +130,11 @@ int main(void)
     else if(!IRBL && IRBR){
 		TurnL();
 	}
+    
+    
  }
- 
+    
+   
 }
 
 void wait10ms(int del){	 //delay function
@@ -144,7 +167,7 @@ while (ADCON0bits.GO);
 return ((ADRESH<<8)+ADRESL);
 }               
 
-// Below are functions for Moter controls
+// Below are functions for Motor controls
 
 void BreakLR()
 {
@@ -185,3 +208,4 @@ void TurnL()
 	B1 = 0;
 	B2 = 0;
 }
+

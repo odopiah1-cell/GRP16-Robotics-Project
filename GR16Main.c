@@ -70,10 +70,12 @@ int main(void)
     int TurnT = 50; // Turning time (TurnT is proportional to the friction of the floor)
     int k = TurnT/4; //Corrects any overturn on smoother surfaces
     
-    LED1=LED2=IRBL; // Shows that IRB is working correctly
-    LED3=LED4=IRBR;
+    LED2=!IRBL; // Shows that IRB is working correctly
+    LED3=!IRBR;
+    LED1 = LED4 = 0;
     
     if(left >= setpoint_distance && right >= setpoint_distance){
+        LED1 = LED4 = 1;
         Reverse();
         wait10ms(T);
         TurnR();
@@ -83,6 +85,7 @@ int main(void)
         
     }
     else if(left >= setpoint_distance){  //If left hand sensor detects object equal or greater than setpoint_distance
+        LED1 = 1;
         Reverse();
         wait10ms(T);
         TurnR();
@@ -93,6 +96,7 @@ int main(void)
         wait10ms(k);
     }
     else if(right >= setpoint_distance){  //If right hand sensor detects an object equal or greater than setpoint_distance
+        LED4 = 1;
         Reverse();
         wait10ms(T);
         TurnL();

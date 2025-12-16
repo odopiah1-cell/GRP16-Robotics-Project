@@ -21,6 +21,9 @@
 #define IRBL PORTAbits.RA2
 #define IRBR PORTAbits.RA3
 
+#define leftEncoder PORTCbits.RC0
+#define rightEncoder PORTCbits.RC5
+
   int obstaclesHit = 0;
 
 int setpoint_distance = 400;   //Distance set point
@@ -44,10 +47,12 @@ int main(void)
 	ADCON1=0b00001101;			// Sets voltage reference and ports AN0 and AN1 as analogue
 	TRISA=0b11001111;   //Port A all inputs except B1 & B2
     TRISB=0b11000000;   //Port B, RB0 to RB5 as outputs
-    setupADC();         // Configure ADC
+    TRISC = 0b00100001;
+	setupADC();         // Configure ADC
 	LATB = 0; 					// Clear all Port B Outputs
 	LATA = 0;					//Clear all Port A Outputs
- 	int markspace=127;         //mark space value for PWM (50% mark space ratio)
+ 	LATC = 0;
+	int markspace=127;         //mark space value for PWM (50% mark space ratio)
  	TRISCbits.RC2=0;          //set CCP1(pin13) to an output pin
 	TRISCbits.RC1=0;		//set CCP2(pin12) to an output pin
  	PR2 = 0b11111111 ;        //set period of PWM
@@ -59,8 +64,20 @@ int main(void)
 
 	// our "main" code is what follows bellow
     
-  
-    for(int i=0; i<3; i++){
+  int tickCount = 0;
+    while (leftEncoder == 1)
+    {
+        tickCount ++;
+    }
+	// our "main" code is what follows bellow
+
+	while (tickCount < 10)
+    {
+        Forward();
+    }
+    
+	
+	for(int i=0; i<3; i++){
         LED1=LED2=LED3=LED4 = 1;    //turn LED1 on
         wait10ms(50);               //wait 1/2 a second
         LED1=LED2=LED3=LED4 = 0;    //turn LED1 off
@@ -208,4 +225,5 @@ void TurnL()
 	B1 = 0;
 	B2 = 0;
 }
+
 
